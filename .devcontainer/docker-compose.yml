@@ -27,6 +27,7 @@ services:
 
   zookeeper:
     image: wurstmeister/zookeeper
+    restart: unless-stopped
     ports:
       - "2181:2181"
     networks:
@@ -34,6 +35,7 @@ services:
 
   kafka:
     image: wurstmeister/kafka
+    restart: unless-stopped
     ports:
       - "9092:9092"
     environment:
@@ -50,14 +52,18 @@ services:
 
   flink:
     image: flink:latest
+    restart: unless-stopped
     ports:
       - "8081:8081"
     environment:
       JOB_MANAGER_RPC_ADDRESS: flink
+    volumes:
+      - ../flink/config.yaml:/config.yaml
     depends_on:
       - kafka
     networks:
       - default_network
+    command: jobmanager
 
 networks:
   default_network:
